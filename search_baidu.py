@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import time
 import jieba  
@@ -28,7 +29,7 @@ def count(count_list,count_nums):
     counts = {}
     sum=0   #字数不为1的词总个数
     for word in count_list:
-        if(len(word) == 1 or word=="..."):  #去除字数为1的词和省略号
+        if(len(word) == 1 or word=="..." or word=="视频" or word=="会员" or word=="知乎"):  #去除字数为1的词和省略号
             continue
         counts[word] = counts.get(word,0) + 1
         sum+=1
@@ -56,9 +57,12 @@ def draw(draw_list):
     # 调用词频统计函数
     count(cut_text,10)
 
+    # 不显示的词组
+    exclude={"视频","会员","知乎"}
+
     # 设置词云图属性
     wc = WordCloud(font_path=r"SimSun.ttf",background_color='white',max_font_size=90,
-                max_words=1000,width=600,height=400) #mask=backImage
+                max_words=1000,width=600,height=400,stopwords=exclude) #mask=backImage
     wc.generate(result)
     
     # 显示图片
@@ -107,10 +111,10 @@ def getInfo(pages):
         g_url = convert_url(so.a.get('href'))#对界面获取的url进行进行访问获取真实Url
         g_title=so.a.get_text().replace('\n','').strip()#根据分析标题无对应标签 只能获取标签内文字 去掉换行和空格  
         try: 
-            #去除贴吧等特殊情况
+            #去除视频等特殊情况
             g_abstract=so.find('div', class_='c-abstract').get_text().replace('\n','').strip()
         except:
-            continue
+            print(g_url)
         total_title +=[g_title]
         temp_title +=[g_title]
         total_url +=[g_url]
@@ -148,7 +152,7 @@ def search_info(wd,num):
             
     try:
         df=pd.DataFrame(data=total_info,columns=['标题','URL','摘要'])
-        df.to_csv(r'search_data.csv',index=False,encoding='utf_8_sig')
+        df.to_csv(r'search_baidu_data.csv',index=False,encoding='utf_8_sig')
         print("保存搜索结果信息到search_data.csv文件成功")
     except:
         return 'FALSE'
@@ -163,6 +167,6 @@ if __name__ == '__main__':
                 'User-Agent':ua.Firefox, 
                 'Referer': "www.baidu.com",
             } 
-    wd = "视频类会员"    # 搜索内容
+    wd = "视频类会员价格"    # 搜索内容
     num = 50           # 总结果信息数目约等于num*10
     search_info(wd,num)
