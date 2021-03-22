@@ -44,8 +44,7 @@ def get_UserInfo(mid,thread_num):
                 total_info.append(user_info)
         else:
             print('获取用户个人信息失败,code {}'.format(req.status_code))
-            print(url)      
-    time.sleep(1.1)
+            print(url)     
 
 # 爬取设定数量id的总的用户信息
 def main(thread_num,start,stop):
@@ -86,4 +85,4 @@ def main(thread_num,start,stop):
         print("爬取信息为空!")
 
 if __name__ == '__main__':
-    main(20,1959000,1960000)
+    main(10,1950000,1951000)
